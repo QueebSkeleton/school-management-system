@@ -44,66 +44,45 @@
           <div
             class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Manage Instructors</h1>
-            <a href="${pageContext.request.contextPath}/admin/instructors/form.jsp"
+            <a href="${pageContext.request.contextPath}/admin/instructors/panel.jsp"
               class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-              <i class="fas fa-plus fa-sm text-white-50"></i> Add
+              <i class="fas fa-undo fa-sm text-white-50"></i> Back
             </a>
           </div>
 
-          <!-- Main Table -->
+          <!-- Instructor Form -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Instructors Table</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Add or Modify an Instructor</h6>
             </div>
             <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email Address</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email Address</th>
-                      <th>Action</th>
-                    </tr>
-                  </tfoot>
-                  <tbody>
-                    <tr>
-                      <td>Tiger Nixon</td>
-                      <td>tigernixon@schlmgmt.com</td>
-                      <td>
-                        <div class="btn-group">
-                          <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-sm fa-edit"></i> Update
-                          </button>
-                          <button class="btn btn-sm btn-danger">
-                            <i class="fas fa-sm fa-trash"></i> Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Adam Smith</td>
-                      <td>adamsmith@schlmgmt.com</td>
-                      <td>
-                        <div class="btn-group">
-                          <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-sm fa-edit"></i> Update
-                          </button>
-                          <button class="btn btn-sm btn-danger">
-                            <i class="fas fa-sm fa-trash"></i> Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <form>
+                <input type="hidden" name="id">
+              
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" required name="name" class="form-control">
+                </div>
+              
+                <div class="form-group">
+                  <label for="name">Email Address</label>
+                  <input type="text" required name="emailAddress" class="form-control">
+                </div>
+              
+                <div class="form-group">
+                  <label for="name">Password</label>
+                  <input type="password" required name="password" class="form-control">
+                </div>
+              
+                <div class="form-group">
+                  <label for="name">Retype Password</label>
+                  <input type="password" required name="retypePassword" class="form-control">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-sm fa-save"></i> Save
+                </button>
+              </form>
             </div>
           </div>
 
