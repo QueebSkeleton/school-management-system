@@ -13,7 +13,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>School Management System - Admin | Dashboard</title>
+<title>School Management System - Admin | Instructors Panel</title>
 
 <%-- Core Links --%>
 <c:import url="../include/coreLinks.jsp"></c:import>
@@ -73,39 +73,28 @@
                     </tr>
                   </tfoot>
                   <tbody>
-                    <tr>
-                      <td>Tiger Nixon</td>
-                      <td>tigernixon@schlmgmt.com</td>
-                      <td>
-                        <div class="btn-group">
-                          <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-sm fa-edit"></i> Update
-                          </button>
-                          <button class="btn btn-sm btn-danger">
-                            <i class="fas fa-sm fa-trash"></i> Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Adam Smith</td>
-                      <td>adamsmith@schlmgmt.com</td>
-                      <td>
-                        <div class="btn-group">
-                          <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-sm fa-edit"></i> Update
-                          </button>
-                          <button class="btn btn-sm btn-danger">
-                            <i class="fas fa-sm fa-trash"></i> Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                    <c:forEach items="${applicationScope['instructorRepository'].getAll()}" var="instructor">
+                      <tr>
+                        <td>${instructor.name}</td>
+                        <td>${instructor.emailAddress}</td>
+                        <td>
+                          <div class="btn-group">
+                            <button class="btn btn-sm btn-primary">
+                              <i class="fas fa-sm fa-edit"></i> Update
+                            </button>
+                            <button class="btn btn-sm btn-danger">
+                              <i class="fas fa-sm fa-trash"></i> Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </c:forEach>
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
+          <!-- End of Main Table -->
 
         </div>
         <!-- /.container-fluid -->
