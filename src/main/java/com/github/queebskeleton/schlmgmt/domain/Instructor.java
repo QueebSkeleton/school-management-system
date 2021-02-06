@@ -14,6 +14,20 @@ public class Instructor {
 	private String password;		// Instructor Password
 	
 	/**
+	 * Constructs a new Instructor.
+	 * 
+	 * @param name name of the instructor
+	 * @param emailAddress email address of the instructor
+	 * @param password password of the instructor for authentication
+	 */
+	public Instructor(String name, String emailAddress, String password) {
+		super();
+		this.name = name;
+		this.emailAddress = emailAddress;
+		this.password = password;
+	}
+	
+	/**
 	 * Constructs a new Instructor with pre-initialized data.
 	 * Used by JDBC when fetching already persisted Instructors.
 	 * 

@@ -79,9 +79,9 @@
                         <td>${instructor.emailAddress}</td>
                         <td>
                           <div class="btn-group">
-                            <button class="btn btn-sm btn-primary">
+                            <a href="<c:url value='/admin/instructors/form.jsp?id=${instructor.id}'/>" class="btn btn-sm btn-primary">
                               <i class="fas fa-sm fa-edit"></i> Update
-                            </button>
+                            </a>
                             <button class="btn btn-sm btn-danger">
                               <i class="fas fa-sm fa-trash"></i> Delete
                             </button>

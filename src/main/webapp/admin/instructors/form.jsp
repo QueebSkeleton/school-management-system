@@ -13,7 +13,18 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>School Management System - Admin | Dashboard</title>
+<title>
+  School Management System - Admin |
+  <c:choose>
+    <c:when test="${param.id eq null or param.id eq 0}">
+      Add
+    </c:when>
+    <c:otherwise>
+      Update
+    </c:otherwise>
+  </c:choose>
+  Instructor
+</title>
 
 <%-- Core Links --%>
 <c:import url="../include/coreLinks.jsp"></c:import>
@@ -49,6 +60,13 @@
               <i class="fas fa-undo fa-sm text-white-50"></i> Back
             </a>
           </div>
+          
+          <%-- Retrieve Instructor if an id was given --%>
+          <c:choose>
+            <c:when test="${param.id != null}">
+              <c:set var="instructor" value="${applicationScope['instructorRepository'].getById(Integer.parseInt(param.id))}"/>
+            </c:when>
+          </c:choose>
 
           <!-- Instructor Form -->
           <div class="card shadow mb-4">
@@ -56,17 +74,17 @@
               <h6 class="m-0 font-weight-bold text-primary">Add or Modify an Instructor</h6>
             </div>
             <div class="card-body">
-              <form>
-                <input type="hidden" name="id">
+              <form method="POST" action="${pageContext.request.contextPath}/admin/instructors/save">
+                <input type="hidden" name="id" value="${instructor != null ? instructor.id : ''}">
               
                 <div class="form-group">
                   <label for="name">Name</label>
-                  <input type="text" required name="name" class="form-control">
+                  <input type="text" required name="name" class="form-control" value="${instructor != null ? instructor.name : ''}">
                 </div>
               
                 <div class="form-group">
                   <label for="name">Email Address</label>
-                  <input type="text" required name="emailAddress" class="form-control">
+                  <input type="text" required name="emailAddress" class="form-control" value="${instructor != null ? instructor.emailAddress : ''}">
                 </div>
               
                 <div class="form-group">

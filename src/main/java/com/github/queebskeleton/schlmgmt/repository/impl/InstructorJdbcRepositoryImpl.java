@@ -1,6 +1,7 @@
 package com.github.queebskeleton.schlmgmt.repository.impl;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -109,7 +110,49 @@ public class InstructorJdbcRepositoryImpl implements Repository<Instructor, Inte
 
 	@Override
 	public void save(Instructor instructor) {
-		throw new UnsupportedOperationException("Not implemented yet.");
+		// If the given instructor has no assigned id yet,
+		// perform an insert
+		if(instructor.getId() == 0) {
+			try(
+				// Grab a connection to the datasource
+				Connection connection = dataSource.getConnection();
+				// Create a SQL INSERT placeholder
+				PreparedStatement insertInstructorStatement = connection.prepareStatement(
+						"INSERT INTO instructor (name, email_address, password) VALUES (?, ?, ?)")) {
+				
+				// Bind the instructor fields to the insert statement
+				insertInstructorStatement.setString(1, instructor.getName());
+				insertInstructorStatement.setString(2, instructor.getEmailAddress());
+				insertInstructorStatement.setString(3, instructor.getPassword());
+				
+				// Execute the insert statement
+				insertInstructorStatement.execute();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		} 
+		
+		// Else, perform an update
+		else {
+			try(
+				// Grab a connection to the datasource
+				Connection connection = dataSource.getConnection();
+				// Create a SQL UPDATE placeholder
+				PreparedStatement updateInstructorStatement = connection.prepareStatement(
+						"UPDATE instructor SET name = ?, email_address = ?, password = ? WHERE id = ?")) {
+				
+				// Bind the instructor fields to the update statement
+				updateInstructorStatement.setString(1, instructor.getName());
+				updateInstructorStatement.setString(2, instructor.getEmailAddress());
+				updateInstructorStatement.setString(3, instructor.getPassword());
+				updateInstructorStatement.setInt(4, instructor.getId());
+				
+				// Execute the update statement
+				updateInstructorStatement.execute();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
