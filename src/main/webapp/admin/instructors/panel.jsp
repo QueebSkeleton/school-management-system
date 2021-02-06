@@ -82,9 +82,10 @@
                             <a href="<c:url value='/admin/instructors/form.jsp?id=${instructor.id}'/>" class="btn btn-sm btn-primary">
                               <i class="fas fa-sm fa-edit"></i> Update
                             </a>
-                            <button class="btn btn-sm btn-danger">
+                            <a href="<c:url value='/admin/instructors/delete?id=${instructor.id}'/>" class="btn btn-sm btn-danger"
+                              onclick="return confirm('Are you sure you want to delete this instructor?')">
                               <i class="fas fa-sm fa-trash"></i> Delete
-                            </button>
+                            </a>
                           </div>
                         </td>
                       </tr>
