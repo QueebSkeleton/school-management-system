@@ -9,8 +9,10 @@ import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
 
 import com.github.queebskeleton.schlmgmt.domain.Instructor;
+import com.github.queebskeleton.schlmgmt.domain.Subject;
 import com.github.queebskeleton.schlmgmt.repository.Repository;
 import com.github.queebskeleton.schlmgmt.repository.impl.InstructorJdbcRepositoryImpl;
+import com.github.queebskeleton.schlmgmt.repository.impl.SubjectJdbcRepositoryImpl;
 
 /**
  * Startup Listener class; is a makeshift dependency injector.
@@ -41,7 +43,11 @@ public class StartupListener implements ServletContextListener {
 			
 			// Construct an Instructor Repository object with the retrieved datasource.
 			Repository<Instructor, Integer> instructorRepository = new InstructorJdbcRepositoryImpl(dataSource);
+			// Construct a Subject Repository object with the retrieved datasource.
+			Repository<Subject, Integer> subjectRepository = new SubjectJdbcRepositoryImpl(dataSource);
+			
 			servletContext.setAttribute("instructorRepository", instructorRepository);
+			servletContext.setAttribute("subjectRepository", subjectRepository);
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}

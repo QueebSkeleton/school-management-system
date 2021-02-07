@@ -63,7 +63,7 @@
                       <th>Name</th>
                       <th>Code</th>
                       <th>Instructor</th>
-                      <th>Created On</th>
+                      <th>Description</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -72,11 +72,31 @@
                       <th>Name</th>
                       <th>Code</th>
                       <th>Instructor</th>
-                      <th>Created On</th>
+                      <th>Description</th>
                       <th>Action</th>
                     </tr>
                   </tfoot>
                   <tbody>
+                    <%-- Get all subjects from the repository then display them here --%>
+                    <c:forEach items="${applicationScope['subjectRepository'].getAll()}" var="subject">
+                      <tr>
+                        <td>${subject.name}</td>
+                        <td>${subject.code}</td>
+                        <td>${subject.instructor.name}</td>
+                        <td>${subject.description}</td>
+                        <td>
+                          <div class="btn-group">
+                            <a href="<c:url value='/admin/subjects/form.jsp?id=${subject.id}'/>" class="btn btn-sm btn-primary">
+                              <i class="fas fa-sm fa-edit"></i> Update
+                            </a>
+                            <a href="<c:url value='/admin/subjects/delete?id=${subject.id}'/>" class="btn btn-sm btn-danger"
+                              onclick="return confirm('Are you sure you want to delete this subject?')">
+                              <i class="fas fa-sm fa-trash"></i> Delete
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    </c:forEach>
                   </tbody>
                 </table>
               </div>
