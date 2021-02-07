@@ -8,6 +8,13 @@ public class Subject {
 	private Instructor instructor;
 	private String description;
 	
+	public Subject(String name, String code, String description) {
+		super();
+		this.name = name;
+		this.code = code;
+		this.description = description;
+	}
+
 	public Subject(int id, String name, String code, Instructor instructor, String description) {
 		super();
 		this.id = id;

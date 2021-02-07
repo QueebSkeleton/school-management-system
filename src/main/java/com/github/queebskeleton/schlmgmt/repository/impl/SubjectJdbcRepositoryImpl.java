@@ -1,6 +1,7 @@
 package com.github.queebskeleton.schlmgmt.repository.impl;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -113,7 +114,7 @@ public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
 						.executeQuery("SELECT subject.id, subject.name, subject.code, subject.description, instructor.id, "
 								+ "instructor.name, instructor.email_address, instructor.password "
 								+ "FROM subject LEFT OUTER JOIN instructor ON instructor.id = subject.instructor_id "
-								+ "WHERE id = " + id)) {
+								+ "WHERE subject.id = " + id)) {
 
 			// If the result set has a data row,
 			// then parse that row into a subject
@@ -151,7 +152,51 @@ public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
 
 	@Override
 	public void save(Subject subject) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		// If the given instructor has no assigned id yet,
+		// perform an insert
+		if (subject.getId() == 0) {
+			try (
+				// Grab a connection to the datasource
+				Connection connection = dataSource.getConnection();
+				// Create a SQL INSERT placeholder
+				PreparedStatement insertSubjectStatement = connection.prepareStatement(
+						"INSERT INTO subject (name, code, instructor_id, description) VALUES (?, ?, ?, ?)")) {
+
+				// Bind the subject fields to the insert statement
+				insertSubjectStatement.setString(1, subject.getName());
+				insertSubjectStatement.setString(2, subject.getCode());
+				insertSubjectStatement.setInt(3, subject.getInstructor().getId());
+				insertSubjectStatement.setString(4, subject.getDescription());
+
+				// Execute the insert statement
+				insertSubjectStatement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// Else, perform an update
+		else {
+			try (
+				// Grab a connection to the datasource
+				Connection connection = dataSource.getConnection();
+				// Create a SQL UPDATE placeholder
+				PreparedStatement updateSubjectStatement = connection.prepareStatement(
+						"UPDATE subject SET name = ?, code = ?, instructor_id = ?, description = ? WHERE id = ?")) {
+
+				// Bind the subject fields to the update statement
+				updateSubjectStatement.setString(1, subject.getName());
+				updateSubjectStatement.setString(2, subject.getCode());
+				updateSubjectStatement.setInt(3, subject.getInstructor().getId());
+				updateSubjectStatement.setString(4, subject.getDescription());
+				updateSubjectStatement.setInt(5, subject.getId());
+
+				// Execute the update statement
+				updateSubjectStatement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override

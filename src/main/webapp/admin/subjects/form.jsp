@@ -60,35 +60,47 @@
               <i class="fas fa-undo fa-sm text-white-50"></i> Back
             </a>
           </div>
+          
+          <%-- Retrieve Subject if an id was given --%>
+          <c:choose>
+            <c:when test="${param.id != null}">
+              <c:set var="subject" value="${applicationScope['subjectRepository'].getById(Integer.parseInt(param.id))}"/>
+            </c:when>
+          </c:choose>
 
-          <!-- Instructor Form -->
+          <!-- Subject Form -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Add or Modify a Subject</h6>
             </div>
             <div class="card-body">
-              <form>
-                <input type="hidden" name="id">
+              <form method="POST" action="${pageContext.request.contextPath}/admin/subjects/save">
+                <input type="hidden" name="id" value="${subject != null ? subject.id : ''}">
               
                 <div class="form-group">
                   <label for="name">Name</label>
-                  <input type="text" required name="name" class="form-control">
+                  <input type="text" required name="name" class="form-control" value="${subject != null ? subject.name : ''}">
                 </div>
               
                 <div class="form-group">
                   <label for="code">Code</label>
-                  <input type="text" required name="code" class="form-control">
+                  <input type="text" required name="code" class="form-control" value="${subject != null ? subject.code : ''}">
                 </div>
               
+                <%-- Retrieve all instructors, place it as select options --%>
                 <div class="form-group">
                   <label for="instructor.id">Instructor</label>
                   <select name="instructor.id" class="form-control">
+                    <option disabled selected> -- Select an option -- </option>
+                    <c:forEach items="${applicationScope['instructorRepository'].getAll()}" var="instructor">
+                      <option value="${instructor.id}" ${subject.instructor != null ? subject.instructor.id == instructor.id ? 'selected' : '' : ''}>${instructor.name}</option>
+                    </c:forEach>
                   </select>
                 </div>
               
                 <div class="form-group">
                   <label for="description">Description</label>
-                  <textarea name="description" rows="5" class="form-control"></textarea>
+                  <textarea name="description" rows="5" class="form-control">${subject != null ? subject.description : ''}</textarea>
                 </div>
                 
                 <button type="submit" class="btn btn-primary">
