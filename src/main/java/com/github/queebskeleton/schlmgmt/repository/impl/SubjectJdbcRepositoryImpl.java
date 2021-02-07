@@ -17,12 +17,12 @@ import com.github.queebskeleton.schlmgmt.domain.Subject;
 import com.github.queebskeleton.schlmgmt.repository.Repository;
 
 /**
- * JDBC Implementation of an Instructor Repository.<br>
+ * JDBC Implementation of a Subject Repository.<br>
  * <br>
  * 
- * Maps a row of a certain `instructor` table to an Instructor domain object.
+ * Maps a row of a certain `subject` table to a Subject domain object.
  * 
- * @author queenskeleton
+ * @author Rian Carlo Reyes
  *
  */
 public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
