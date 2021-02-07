@@ -201,7 +201,21 @@ public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
 
 	@Override
 	public void deleteById(Integer id) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		try (
+			// Grab a connection to the datasource
+			Connection connection = dataSource.getConnection();
+			// Create a SQL DELETE placeholder
+			PreparedStatement deleteSubjectStatement = connection.prepareStatement(
+					"DELETE FROM subject WHERE id = ?")) {
+
+			// Bind the given id to the delete statement
+			deleteSubjectStatement.setInt(1, id);
+
+			// Execute the delete statement
+			deleteSubjectStatement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
