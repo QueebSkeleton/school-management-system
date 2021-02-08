@@ -1,5 +1,8 @@
 package com.github.queebskeleton.schlmgmt.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Domain class for a Subject.
  * 
@@ -18,6 +21,8 @@ public class Subject {
 	private int instructorId;
 	// Description of the Subject
 	private String description;
+	// List of Activities
+	private List<Activity> activities;
 	
 	/**
 	 * Constructs a fresh Subject with the given name, code and description.
@@ -32,6 +37,7 @@ public class Subject {
 		this.code = code;
 		this.instructorId = instructorId;
 		this.description = description;
+		this.activities = new ArrayList<>();
 	}
 	
 	/**
@@ -44,13 +50,14 @@ public class Subject {
 	 * @param instructor the associated instructor
 	 * @param description description of the subject
 	 */
-	public Subject(int id, String name, String code, int instructorId, String description) {
+	public Subject(int id, String name, String code, int instructorId, String description, List<Activity> activities) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.code = code;
 		this.instructorId = instructorId;
 		this.description = description;
+		this.activities = activities;
 	}
 
 	public int getId() {
@@ -87,6 +94,14 @@ public class Subject {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public List<Activity> getActivities() {
+		return activities;
+	}
+	
+	public void addActivity(Activity activity) {
+		this.activities.add(activity);
 	}
 
 }

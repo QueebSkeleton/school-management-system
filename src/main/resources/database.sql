@@ -53,6 +53,24 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
+-- -----------------------------------------------------
+-- Table `school_system_db`.`subject`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `school_system_db`.`activity` ;
+
+CREATE TABLE `school_system_db`.`activity` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `subject_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_on` datetime NOT NULL,
+  `deadline` datetime NOT NULL,
+  `total_score` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `subject_id` (`subject_id`),
+  CONSTRAINT `activity_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
