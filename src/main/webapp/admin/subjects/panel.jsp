@@ -1,6 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-  pageEncoding="UTF-8" isELIgnored="false"%>
+  pageEncoding="UTF-8" isELIgnored="false"
+  import="
+  com.github.queebskeleton.schlmgmt.repository.Repository,
+  com.github.queebskeleton.schlmgmt.domain.Instructor,
+  com.github.queebskeleton.schlmgmt.domain.Subject,
+  java.util.List,
+  java.util.Map,
+  java.util.stream.Collectors" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<%-- Wire dependencies from the ServletContext --%>
+<%!
+  private Repository<Instructor, Integer> instructorRepository;
+  private Repository<Subject, Integer> subjectRepository;
+
+  @SuppressWarnings("unchecked")
+  public void jspInit() {
+     ServletContext servletContext = getServletContext();
+     // Grab the subject repository object from the Servlet Context then inject it.
+     subjectRepository = (Repository<Subject, Integer>)
+          getServletContext().getAttribute("subjectRepository");
+     // Grab the instructor repository object from the Servlet Context then inject it.
+     instructorRepository = (Repository<Instructor, Integer>)
+          getServletContext().getAttribute("instructorRepository");
+  }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,6 +74,20 @@
               <i class="fas fa-plus fa-sm text-white-50"></i> Add
             </a>
           </div>
+          
+          <%
+          // TODO: Utilize a Collection of Data Transfer Objects, maybe.
+          List<Subject> subjectList = subjectRepository.getAll();
+          Map<Integer, Instructor> instructorMap =
+              instructorRepository.getAll(
+                subjectList.parallelStream()
+                  .map(subject -> subject.getInstructorId())
+                  .collect(Collectors.toList()))
+                .parallelStream()
+                .collect(Collectors.toMap(Instructor::getId, instructor -> instructor));
+          request.setAttribute("subjectList", subjectList);
+          request.setAttribute("instructorMap", instructorMap);
+          %>
 
           <!-- Main Table -->
           <div class="card shadow mb-4">
@@ -78,11 +117,11 @@
                   </tfoot>
                   <tbody>
                     <%-- Get all subjects from the repository then display them here --%>
-                    <c:forEach items="${applicationScope['subjectRepository'].getAll()}" var="subject">
+                    <c:forEach items="${subjectList}" var="subject">
                       <tr>
                         <td>${subject.name}</td>
                         <td>${subject.code}</td>
-                        <td>${subject.instructor.name}</td>
+                        <td>${instructorMap.get(subject.instructorId).name}</td>
                         <td>${subject.description}</td>
                         <td>
                           <div class="btn-group">

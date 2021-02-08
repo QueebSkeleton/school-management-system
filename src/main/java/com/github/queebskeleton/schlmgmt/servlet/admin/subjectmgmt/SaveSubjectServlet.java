@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.queebskeleton.schlmgmt.domain.Instructor;
 import com.github.queebskeleton.schlmgmt.domain.Subject;
 import com.github.queebskeleton.schlmgmt.repository.Repository;
 
@@ -26,15 +25,10 @@ public class SaveSubjectServlet extends HttpServlet {
 	
 	// Subject Repository dependency
 	private Repository<Subject, Integer> subjectRepository;
-	// Instructor Repository dependency
-	private Repository<Instructor, Integer> instructorRepository;
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
-		// Grab the instructor repository object from the Servlet Context then inject it.
-		instructorRepository = (Repository<Instructor, Integer>)
-				getServletContext().getAttribute("instructorRepository");
 		// Grab the subject repository object from the Servlet Context then inject it.
 		subjectRepository = (Repository<Subject, Integer>)
 				getServletContext().getAttribute("subjectRepository");
@@ -45,18 +39,9 @@ public class SaveSubjectServlet extends HttpServlet {
 		
 		// Get the id from the request parameters
 		String paramId = request.getParameter("id");
-		String paramInstructorId = request.getParameter("instructor.id");
 		
 		// Placeholder for a subject object
 		Subject subject = null;
-		// Placeholder for the instructor object
-		Instructor subjectInstructor = null;
-		
-		// If the instructor id is not null or empty, retrieve the associated instructor from the repository
-		if(paramInstructorId != null && !paramInstructorId.contentEquals(""))
-			// TODO: Handle error for invalid instructor id
-			subjectInstructor = instructorRepository.getById(Integer.parseInt(paramInstructorId));
-			
 		
 		// If the id is null or empty, construct a new Subject
 		if(paramId == null || paramId.contentEquals(""))
@@ -64,6 +49,7 @@ public class SaveSubjectServlet extends HttpServlet {
 					new Subject(
 							request.getParameter("name"),
 							request.getParameter("code"),
+							Integer.parseInt(request.getParameter("instructor.id")),
 							request.getParameter("description"));
 		
 		// If the id is not null, attempt to retrieve its associated subject from the repository,
@@ -73,10 +59,9 @@ public class SaveSubjectServlet extends HttpServlet {
 					Integer.parseInt(request.getParameter("id")));
 			subject.setName(request.getParameter("name"));
 			subject.setCode(request.getParameter("code"));
+			subject.setInstructorId(Integer.parseInt(request.getParameter("instructor.id")));
 			subject.setDescription(request.getParameter("description"));
 		}
-		
-		subject.setInstructor(subjectInstructor);
 		
 		// Save the subject object
 		subjectRepository.save(subject);

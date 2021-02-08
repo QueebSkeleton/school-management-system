@@ -6,13 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.github.queebskeleton.schlmgmt.domain.Instructor;
 import com.github.queebskeleton.schlmgmt.domain.Subject;
 import com.github.queebskeleton.schlmgmt.repository.Repository;
 
@@ -53,40 +52,63 @@ public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
 				Statement retrieveSubjectsStatement = connection.createStatement();
 				// Execute a SQL SELECT for every subject and its instructor, and grab the ResultSet
 				ResultSet subjectsResultSet = retrieveSubjectsStatement
-						.executeQuery("SELECT subject.id, subject.name, subject.code, subject.description, instructor.id, "
-								+ "instructor.name, instructor.email_address, instructor.password "
-								+ "FROM subject LEFT OUTER JOIN instructor ON instructor.id = subject.instructor_id")) {
-			
-			Map<Integer, Instructor> instructorMap = new HashMap<>();
+						.executeQuery("SELECT id, name, code, description, instructor_id FROM subject")) {
 
 			// Map each row of the ResultSet to a Subject object
-			while (subjectsResultSet.next()) {
-				Instructor subjectInstructor = null;
-				
-				// If this subject row has an instructor id, proceed retrieving the instructor
-				if(subjectsResultSet.getInt(5) != 0) {
-					// Grab the instructor
-					if(instructorMap.containsKey(subjectsResultSet.getInt(5)))
-						subjectInstructor = instructorMap.get(subjectsResultSet.getInt(5));
-					else {
-						subjectInstructor = new Instructor(
-								subjectsResultSet.getInt(5),
-								subjectsResultSet.getString(6),
-								subjectsResultSet.getString(7),
-								subjectsResultSet.getString(8));
-						instructorMap.put(subjectInstructor.getId(), subjectInstructor);
-					}
-				}
-				
-				// Grab the subject
-				Subject subject = new Subject(
+			while (subjectsResultSet.next())
+				subjectList.add(new Subject(
 						subjectsResultSet.getInt(1),
 						subjectsResultSet.getString(2),
 						subjectsResultSet.getString(3),
-						subjectInstructor,
-						subjectsResultSet.getString(4));
-				subjectList.add(subject);
-			}
+						subjectsResultSet.getInt(5),
+						subjectsResultSet.getString(4)));
+		} catch (SQLException e) {
+			// TODO: Propagate a proper exception for the Servlets
+			e.printStackTrace();
+		}
+
+		// Return the final list
+		return subjectList;
+	}
+
+	/**
+	 * @see com.github.queebskeleton.schlmgmt.repository.Repository#getAll(Object)
+	 */
+	@Override
+	public List<Subject> getAll(Collection<Integer> ids) {
+		// Check if the given collection is null
+		if(ids == null || ids.size() == 0)
+			throw new IllegalArgumentException("Invalid id collection given.");
+		
+		// ArrayList of subjects
+		List<Subject> subjectList = new ArrayList<>();
+		
+		// Construct the string query
+		Iterator<Integer> idsIterator = ids.iterator();
+		StringBuilder retrieveSubjectsQueryBuilder = new StringBuilder(
+				"SELECT id, name, code, description, instructor_id FROM subject WHERE id IN (" + idsIterator.next());
+		while(idsIterator.hasNext()) {
+			retrieveSubjectsQueryBuilder.append(",");
+			retrieveSubjectsQueryBuilder.append(idsIterator.next());
+		}
+		retrieveSubjectsQueryBuilder.append(")");
+
+		try (
+			// Grab a connection to the datasource
+			Connection connection = dataSource.getConnection();
+			// Create a SQL SELECT placeholder
+			PreparedStatement retrieveSubjectsStatement = connection.prepareStatement(retrieveSubjectsQueryBuilder.toString());
+			// Execute a SQL SELECT for every subject, and grab the ResultSet
+			ResultSet subjectsResultSet = retrieveSubjectsStatement.executeQuery()) {
+
+			// Map each row of the ResultSet to a Subject object
+			while (subjectsResultSet.next())
+				subjectList.add(new Subject(
+						subjectsResultSet.getInt(1),
+						subjectsResultSet.getString(2),
+						subjectsResultSet.getString(3),
+						subjectsResultSet.getInt(5),
+						subjectsResultSet.getString(4)));
 		} catch (SQLException e) {
 			// TODO: Propagate a proper exception for the Servlets
 			e.printStackTrace();
@@ -111,30 +133,17 @@ public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
 				Statement retrieveSubjectStatement = connection.createStatement();
 				// Execute a SQL SELECT for subject by their id, and grab the ResultSet
 				ResultSet subjectResultSet = retrieveSubjectStatement
-						.executeQuery("SELECT subject.id, subject.name, subject.code, subject.description, instructor.id, "
-								+ "instructor.name, instructor.email_address, instructor.password "
-								+ "FROM subject LEFT OUTER JOIN instructor ON instructor.id = subject.instructor_id "
-								+ "WHERE subject.id = " + id)) {
+						.executeQuery("SELECT id, name, code, description, instructor_id FROM subject WHERE id = " + id)) {
 
 			// If the result set has a data row,
 			// then parse that row into a subject
 			if (subjectResultSet.next()) {
-				
-				// Retrieve the instructor if the id exists
-				Instructor subjectInstructor = null;
-				if(subjectResultSet.getInt(5) != 0)
-					subjectInstructor = new Instructor(
-							subjectResultSet.getInt(5),
-							subjectResultSet.getString(6),
-							subjectResultSet.getString(7),
-							subjectResultSet.getString(8));
-				
 				// Parse the subject
 				subject = new Subject(
 						subjectResultSet.getInt(1),
 						subjectResultSet.getString(2),
 						subjectResultSet.getString(3),
-						subjectInstructor,
+						subjectResultSet.getInt(5),
 						subjectResultSet.getString(4));
 			}
 
@@ -165,7 +174,7 @@ public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
 				// Bind the subject fields to the insert statement
 				insertSubjectStatement.setString(1, subject.getName());
 				insertSubjectStatement.setString(2, subject.getCode());
-				insertSubjectStatement.setInt(3, subject.getInstructor().getId());
+				insertSubjectStatement.setInt(3, subject.getInstructorId());
 				insertSubjectStatement.setString(4, subject.getDescription());
 
 				// Execute the insert statement
@@ -187,7 +196,7 @@ public class SubjectJdbcRepositoryImpl implements Repository<Subject, Integer> {
 				// Bind the subject fields to the update statement
 				updateSubjectStatement.setString(1, subject.getName());
 				updateSubjectStatement.setString(2, subject.getCode());
-				updateSubjectStatement.setInt(3, subject.getInstructor().getId());
+				updateSubjectStatement.setInt(3, subject.getInstructorId());
 				updateSubjectStatement.setString(4, subject.getDescription());
 				updateSubjectStatement.setInt(5, subject.getId());
 

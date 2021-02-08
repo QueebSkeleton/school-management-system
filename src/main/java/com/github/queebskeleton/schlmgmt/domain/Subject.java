@@ -15,7 +15,7 @@ public class Subject {
 	// Subject Code
 	private String code;
 	// Associated Instructor
-	private Instructor instructor;
+	private int instructorId;
 	// Description of the Subject
 	private String description;
 	
@@ -26,10 +26,11 @@ public class Subject {
 	 * @param code code of the subject
 	 * @param description description of the subject
 	 */
-	public Subject(String name, String code, String description) {
+	public Subject(String name, String code, int instructorId, String description) {
 		super();
 		this.name = name;
 		this.code = code;
+		this.instructorId = instructorId;
 		this.description = description;
 	}
 	
@@ -43,12 +44,12 @@ public class Subject {
 	 * @param instructor the associated instructor
 	 * @param description description of the subject
 	 */
-	public Subject(int id, String name, String code, Instructor instructor, String description) {
+	public Subject(int id, String name, String code, int instructorId, String description) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.code = code;
-		this.instructor = instructor;
+		this.instructorId = instructorId;
 		this.description = description;
 	}
 
@@ -72,12 +73,12 @@ public class Subject {
 		this.code = code;
 	}
 
-	public Instructor getInstructor() {
-		return instructor;
+	public int getInstructorId() {
+		return instructorId;
 	}
 
-	public void setInstructor(Instructor instructor) {
-		this.instructor = instructor;
+	public void setInstructorId(int instructorId) {
+		this.instructorId = instructorId;
 	}
 
 	public String getDescription() {

@@ -1,5 +1,6 @@
 package com.github.queebskeleton.schlmgmt.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,6 +18,11 @@ public interface Repository<T, ID> {
 	 * @return the list of elements
 	 */
 	List<T> getAll();
+	/**
+	 * Grabs all elements stored in this repository, with the given IDs.
+	 * @return the list of elements
+	 */
+	List<T> getAll(Collection<ID> ids);
 	/**
 	 * Grabs an element by its identifier.
 	 * @param id the identifier of the element

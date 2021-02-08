@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -44,14 +46,57 @@ public class InstructorJdbcRepositoryImpl implements Repository<Instructor, Inte
 		List<Instructor> instructorList = new ArrayList<>();
 
 		try (
-				// Grab a connection to the datasource
-				Connection connection = dataSource.getConnection();
-				// Create a SQL SELECT placeholder
-				Statement retrieveInstructorsStatement = connection.createStatement();
-				// Execute a SQL SELECT for every instructor, and grab the ResultSet
-				ResultSet instructorsResultSet = retrieveInstructorsStatement
-						.executeQuery("SELECT id, name, email_address, password FROM instructor")) {
+			// Grab a connection to the datasource
+			Connection connection = dataSource.getConnection();
+			// Create a SQL SELECT placeholder
+			Statement retrieveInstructorsStatement = connection.createStatement();
+			// Execute a SQL SELECT for every instructor, and grab the ResultSet
+			ResultSet instructorsResultSet = retrieveInstructorsStatement
+					.executeQuery("SELECT id, name, email_address, password FROM instructor")) {
 
+			// Map each row of the ResultSet to an Instructor object
+			while (instructorsResultSet.next())
+				instructorList.add(new Instructor(instructorsResultSet.getInt(1), instructorsResultSet.getString(2),
+						instructorsResultSet.getString(3), instructorsResultSet.getString(4)));
+		} catch (SQLException e) {
+			// TODO: Propagate a proper exception for the Servlets
+			e.printStackTrace();
+		}
+
+		// Return the final list
+		return instructorList;
+	}
+
+	/**
+	 * @see com.github.queebskeleton.schlmgmt.repository.Repository#getAll(Object)
+	 */
+	@Override
+	public List<Instructor> getAll(Collection<Integer> ids) {
+		// Check if the given collection is null
+		if(ids == null || ids.size() == 0)
+			throw new IllegalArgumentException("Invalid id collection given.");
+		
+		// ArrayList of instructors
+		List<Instructor> instructorList = new ArrayList<>();
+		
+		// Construct the string query
+		Iterator<Integer> idsIterator = ids.iterator();
+		StringBuilder retrieveInstructorsQueryBuilder = new StringBuilder(
+				"SELECT id, name, email_address, password FROM instructor WHERE id IN (" + idsIterator.next());
+		while(idsIterator.hasNext()) {
+			retrieveInstructorsQueryBuilder.append(",");
+			retrieveInstructorsQueryBuilder.append(idsIterator.next());
+		}
+		retrieveInstructorsQueryBuilder.append(")");
+
+		try (
+			// Grab a connection to the datasource
+			Connection connection = dataSource.getConnection();
+			// Create a SQL SELECT placeholder
+			PreparedStatement retrieveInstructorsStatement = connection.prepareStatement(retrieveInstructorsQueryBuilder.toString());
+			// Execute a SQL SELECT for every instructor, and grab the ResultSet
+			ResultSet instructorsResultSet = retrieveInstructorsStatement.executeQuery()) {
+			
 			// Map each row of the ResultSet to an Instructor object
 			while (instructorsResultSet.next())
 				instructorList.add(new Instructor(instructorsResultSet.getInt(1), instructorsResultSet.getString(2),

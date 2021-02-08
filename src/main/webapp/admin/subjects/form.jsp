@@ -93,7 +93,7 @@
                   <select name="instructor.id" class="form-control">
                     <option disabled selected> -- Select an option -- </option>
                     <c:forEach items="${applicationScope['instructorRepository'].getAll()}" var="instructor">
-                      <option value="${instructor.id}" ${subject.instructor != null ? subject.instructor.id == instructor.id ? 'selected' : '' : ''}>${instructor.name}</option>
+                      <option value="${instructor.id}" ${subject.instructorId == instructor.id ? 'selected' : ''}>${instructor.name}</option>
                     </c:forEach>
                   </select>
                 </div>
