@@ -125,6 +125,9 @@
                         <td>${subject.description}</td>
                         <td>
                           <div class="btn-group">
+                            <a href="<c:url value='/admin/subjects/view.jsp?id=${subject.id}'/>" class="btn btn-sm btn-info">
+                              <i class="fas fa-sm fa-eye"></i> View
+                            </a>
                             <a href="<c:url value='/admin/subjects/form.jsp?id=${subject.id}'/>" class="btn btn-sm btn-primary">
                               <i class="fas fa-sm fa-edit"></i> Update
                             </a>
