@@ -104,8 +104,21 @@
             <!-- Activities Card -->
             <div class="col-md-6">
               <div class="card shadow mb-4">
-                <div class="card-header py-3">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Activities</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button"
+                      id="actionsDropdownLink" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false"> <i
+                      class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div
+                      class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                      aria-labelledby="actionsDropdownLink">
+                      <div class="dropdown-header">Actions:</div>
+                      <a class="dropdown-item" href="<c:url value='/admin/subjects/activity_form.jsp?subjectId=${param.id}'/>">Add</a>
+                    </div>
+                  </div>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
@@ -129,7 +142,8 @@
                         </tr>
                       </tfoot>
                       <tbody>
-                        <c:forEach items="${subject.activities}" var="activity" varStatus="loop">
+                        <c:forEach items="${subject.activities}"
+                          var="activity" varStatus="loop">
                           <tr>
                             <td>${loop.index + 1}</td>
                             <td>${activity.name}</td>
